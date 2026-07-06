@@ -1,0 +1,42 @@
+[general]
+# Limit framerate to drastically reduce CPU usage!
+framerate = 30
+# Lower sensitivity/autosens means less CPU math overhead
+autosens = 0
+sensitivity = 100
+bars = 0
+bar_width = 2
+bar_spacing = 1
+
+[input]
+method = fifo
+source = /tmp/mpd.fifo
+sample_rate = 44100
+sample_bits = 16
+
+[output]
+# ncurses is much more CPU efficient than noncurses
+method = ncurses
+channels = stereo
+
+[smoothing]
+# Reduce mathematical smoothing filters to save CPU
+integral = 77
+monstercat = 0
+waves = 0
+gravity = 100
+ignore = 0
+noise_reduction = 0.77
+
+[color]
+# A beautiful gradient
+gradient = 1
+gradient_count = 8
+gradient_color_1 = '#59ccff'
+gradient_color_2 = '#42a5ff'
+gradient_color_3 = '#2b7fff'
+gradient_color_4 = '#1459ff'
+gradient_color_5 = '#592bff'
+gradient_color_6 = '#9e00ff'
+gradient_color_7 = '#e300ff'
+gradient_color_8 = '#ff00aa'
