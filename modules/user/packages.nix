@@ -15,6 +15,7 @@
     gpu-screen-recorder
     obsidian
     openboard
+    libreoffice-fresh
     dunst
     nemo
     haruna
@@ -68,5 +69,6 @@
     nodejs_22     # Node.js
     go            # Go compiler
     fzf           # Command-line fuzzy finder
+    firebase-tools # Firebase CLI
   ];
 }
