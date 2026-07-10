@@ -186,7 +186,7 @@
         "transparency": {
             "base": 0.35,
             "enabled": true,
-            "layers": 0.2
+            "layers": 0.3
         }
     },
     "background": {
