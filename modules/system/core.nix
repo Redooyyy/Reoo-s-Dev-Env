@@ -54,7 +54,31 @@ EOF
   networking.networkmanager.enable = true;
   users.users.root.hashedPassword = "$6$rounds=4096$YwcWRjbQ1gnZcur1$PSpuyb0uyNg/fEBsZTIAxswpmKY0726ZGYCf/WKDaYYIl/AjMpHQ63F9mWPPWBq5QN1J9YRV58iL136HLHnl20";
   programs.fish.enable = true;
-  programs.nix-ld.enable = true;
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      libx11
+      libxxf86vm
+      libxext
+      libxtst
+      libxi
+      libxrender
+      libxcursor
+      libxdamage
+      libxcomposite
+      libxrandr
+      libxfixes
+      glib
+      gtk3
+      cairo
+      pango
+      alsa-lib
+      libGL
+      freetype
+      fontconfig
+      dbus
+    ];
+  };
   time.timeZone = "Asia/Dhaka";
   swapDevices = [ { device = "/swapfile"; size = 4096; } ];
   users.users."reo" = {
@@ -68,6 +92,17 @@ EOF
     owner = "root";
     group = "root";
     source = "${pkgs.intel-gpu-tools}/bin/intel_gpu_top";
+  };
+
+  services.mysql = {
+    enable = true;
+    package = pkgs.mariadb;
+    initialScript = pkgs.writeText "mariadb-init.sql" ''
+      CREATE USER IF NOT EXISTS 'root'@'localhost' IDENTIFIED BY '20052005';
+      ALTER USER 'root'@'localhost' IDENTIFIED BY '20052005';
+      GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+      FLUSH PRIVILEGES;
+    '';
   };
 
   system.stateVersion = "25.11";
