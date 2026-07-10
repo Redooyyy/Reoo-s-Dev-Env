@@ -5,4 +5,4 @@ hl.bind("CTRL + Y", hl.dsp.exec_cmd("/home/reo/.config/caelestia/scripts/yt-wrap
 -- YouTube Autoplay Daemon (Now runs via Systemd!)
 
 -- Save currently playing YouTube song to Library (Download)
-hl.bind("CTRL + S", hl.dsp.exec_cmd("foot --app-id yt-floating fish -i -c yt-save"))
+hl.bind("CTRL + S", hl.dsp.exec_cmd("/home/reo/nixos-config/caelestia-config/scripts/yt-save-wrapper.sh"))
