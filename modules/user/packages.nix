@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, antigravity-nix, ... }:
 {
   home.packages = with pkgs; [
     android-studio
@@ -23,30 +23,8 @@
     tree-sitter
     papirus-icon-theme
     adw-gtk3
-    # GUI & Theming
-    (pkgs.buildFHSEnv {
-      name = "antigravity";
-      targetPkgs = pkgs: with pkgs; [
-        glib nss nspr atk at-spi2-atk cups dbus libdrm gtk3 pango cairo gdk-pixbuf expat mesa alsa-lib systemd
-        libX11 libXcomposite libXdamage libXext libXfixes libXrandr libXrender libXtst libXxf86vm libxcb libxshmfence
-        libgbm libxkbcommon curl git gnupg libsecret gnome-keyring
-      ];
-      runScript = pkgs.writeShellScript "antigravity-wrapper" ''
-        export GNOME_KEYRING_CONTROL=/run/user/$(id -u)/keyring
-        export SSH_AUTH_SOCK=/run/user/$(id -u)/keyring/ssh
-        exec /home/reo/.local/share/Antigravity-x64/antigravity --password-store=gnome-libsecret "$@"
-      '';
-    })
-    (pkgs.makeDesktopItem {
-      name = "antigravity";
-      desktopName = "Antigravity";
-      comment = "Google DeepMind Agentic Coding Assistant";
-      exec = "antigravity";
-      icon = "terminal";
-      terminal = false;
-      categories = [ "Development" "Utility" ];
-      mimeTypes = [ "x-scheme-handler/antigravity" ];
-    })
+    # Antigravity IDE (via community Nix flake, auto-updated 3x/week)
+    antigravity-nix.packages.${pkgs.stdenv.system}.google-antigravity-ide
     bibata-cursors
     nwg-look
     tumbler
