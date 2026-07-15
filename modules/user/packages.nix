@@ -1,4 +1,22 @@
-{ config, pkgs, antigravity-nix, ... }:
+{ config, pkgs, antigravity-nix, claude-code-nix, ... }:
+let
+  # 9router - CLI proxy router for AI services
+  # Install from npm registry since it's not in nixpkgs
+  ninerouter = pkgs.stdenv.mkDerivation {
+    pname = "9router";
+    version = "1.0.0";
+    dontUnpack = true;
+    nativeBuildInputs = [ pkgs.nodejs_22 ];
+    installPhase = ''
+      export HOME=$TMPDIR
+      ${pkgs.nodejs_22}/bin/npm install -g --prefix $out 9router
+    '';
+    meta = with pkgs.lib; {
+      description = "CLI proxy router for AI services";
+      license = licenses.mit;
+    };
+  };
+in
 {
   home.packages = with pkgs; [
     android-studio
@@ -25,6 +43,10 @@
     adw-gtk3
     # Antigravity IDE (via community Nix flake, auto-updated 3x/week)
     antigravity-nix.packages.${pkgs.stdenv.system}.google-antigravity-ide
+    # Claude Code CLI
+    claude-code-nix.packages.${pkgs.stdenv.system}.default
+    # 9router proxy for AI services
+    ninerouter
     bibata-cursors
     nwg-look
     tumbler
