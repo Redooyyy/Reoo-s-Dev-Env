@@ -20,9 +20,17 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
+    antigravity-nix = {
+      url = "github:jacopone/antigravity-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    claude-code-nix = {
+      url = "github:sadjow/claude-code-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, caelestia-shell, hjem, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, caelestia-shell, hjem, antigravity-nix, claude-code-nix, ... }@inputs: {
     nixosConfigurations.dedSec = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
@@ -34,7 +42,7 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = { inherit inputs; };
+          home-manager.extraSpecialArgs = { inherit inputs antigravity-nix claude-code-nix; };
           home-manager.users.reo = import ./modules/user/default.nix;
         }
       ];

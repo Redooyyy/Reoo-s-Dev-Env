@@ -1,3 +1,6 @@
+# Add local npm packages to PATH
+set -gx PATH ~/.npm-global/bin $PATH
+
 if status is-interactive
     # Starship custom prompt
     command -v starship &> /dev/null && starship init fish | source

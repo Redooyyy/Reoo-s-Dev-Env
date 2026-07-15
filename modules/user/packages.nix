@@ -1,4 +1,22 @@
-{ config, pkgs, ... }:
+{ config, pkgs, antigravity-nix, claude-code-nix, ... }:
+let
+  # 9router - CLI proxy router for AI services
+  # Install from npm registry since it's not in nixpkgs
+  ninerouter = pkgs.stdenv.mkDerivation {
+    pname = "9router";
+    version = "1.0.0";
+    dontUnpack = true;
+    nativeBuildInputs = [ pkgs.nodejs_22 ];
+    installPhase = ''
+      export HOME=$TMPDIR
+      ${pkgs.nodejs_22}/bin/npm install -g --prefix $out 9router
+    '';
+    meta = with pkgs.lib; {
+      description = "CLI proxy router for AI services";
+      license = licenses.mit;
+    };
+  };
+in
 {
   home.packages = with pkgs; [
     android-studio
@@ -23,30 +41,12 @@
     tree-sitter
     papirus-icon-theme
     adw-gtk3
-    # GUI & Theming
-    (pkgs.buildFHSEnv {
-      name = "antigravity";
-      targetPkgs = pkgs: with pkgs; [
-        glib nss nspr atk at-spi2-atk cups dbus libdrm gtk3 pango cairo gdk-pixbuf expat mesa alsa-lib systemd
-        libX11 libXcomposite libXdamage libXext libXfixes libXrandr libXrender libXtst libXxf86vm libxcb libxshmfence
-        libgbm libxkbcommon curl git gnupg libsecret gnome-keyring
-      ];
-      runScript = pkgs.writeShellScript "antigravity-wrapper" ''
-        export GNOME_KEYRING_CONTROL=/run/user/$(id -u)/keyring
-        export SSH_AUTH_SOCK=/run/user/$(id -u)/keyring/ssh
-        exec /home/reo/.local/share/Antigravity-x64/antigravity --password-store=gnome-libsecret "$@"
-      '';
-    })
-    (pkgs.makeDesktopItem {
-      name = "antigravity";
-      desktopName = "Antigravity";
-      comment = "Google DeepMind Agentic Coding Assistant";
-      exec = "antigravity";
-      icon = "terminal";
-      terminal = false;
-      categories = [ "Development" "Utility" ];
-      mimeTypes = [ "x-scheme-handler/antigravity" ];
-    })
+    # Antigravity IDE (via community Nix flake, auto-updated 3x/week)
+    antigravity-nix.packages.${pkgs.stdenv.system}.google-antigravity-ide
+    # Claude Code CLI
+    claude-code-nix.packages.${pkgs.stdenv.system}.default
+    # 9router proxy for AI services
+    ninerouter
     bibata-cursors
     nwg-look
     tumbler
