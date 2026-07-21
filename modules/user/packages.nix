@@ -1,16 +1,31 @@
 { config, pkgs, antigravity-nix, claude-code-nix, ... }:
 let
   # 9router - CLI proxy router for AI services
-  # Install from npm registry since it's not in nixpkgs
-  ninerouter = pkgs.stdenv.mkDerivation {
+  # Tarball already bundles app/node_modules — no npm network needed at build time.
+  # Hash: sha512 SRI from npm registry integrity field.
+  ninerouter-src = pkgs.fetchurl {
+    url  = "https://registry.npmjs.org/9router/-/9router-0.5.30.tgz";
+    hash = "sha512-1JsqzRuawrS6b4Fqw15/vhIWjH179ehGQXuvQiTnvPksXG8jbtS26lVyBOy6VXkRVZC3WRWpyhDVNQy2DOgYlw==";
+  };
+
+  ninerouter = pkgs.buildNpmPackage {
     pname = "9router";
-    version = "1.0.0";
-    dontUnpack = true;
-    nativeBuildInputs = [ pkgs.nodejs_22 ];
-    installPhase = ''
-      export HOME=$TMPDIR
-      ${pkgs.nodejs_22}/bin/npm install -g --prefix $out 9router
+    version = "0.5.30";
+    src = ninerouter-src;
+
+npmDepsHash = "sha256-hOE56M+AmjHCbaungOMTnvHghbsdf/QZFLXFU8w7kBM=";
+    dontNpmBuild = true;
+
+    postPatch = ''
+      cp ${./9router-package-lock.json} package-lock.json
     '';
+
+    postInstall = ''
+      mkdir -p $out/bin
+      makeWrapper ${pkgs.nodejs_22}/bin/node $out/bin/9router \
+        --add-flags "$out/lib/node_modules/9router/cli.js"
+    '';
+
     meta = with pkgs.lib; {
       description = "CLI proxy router for AI services";
       license = licenses.mit;
